@@ -1,0 +1,70 @@
+\section{Compression: gzip, bzip2 and xz and Backups}
+
+\begin{frame}
+   {Archive Compression Methods}
+
+   \begin{itemize}
+      \item \textbf{Compressing} files saves
+      disk space and/or network transmission time.
+      \item
+      In order of increasing compression efficiency
+      which comes at the cost of longer compression times:
+      \begin{itemize}
+         \item \textbf{gzip}: Uses Lempel-Ziv Coding (LZ77), and
+         produces \texttt{.gz} files
+         \item \textbf{bzip2}: Uses Burrows-Wheeler block sorting
+         text compression algorithm and Huffman coding, and
+         produces \texttt{.bz2} files
+         \item \textbf{xz}: Produces \texttt{.xz} files. and also
+         supports legacy \texttt{.lzma} format
+
+      \end{itemize}
+      \item
+      Modern machines will often find the
+      \textbf{compress $\rightarrow$ transmit $\rightarrow$ decompress} cycle
+      faster than just transmitting (or copying) an
+      uncompressed file.
+      \item
+      \url{https://www.kernel.org} only uses \textbf{xz} format now
+      for downloading \textbf{Linux} kernels
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   The compression utilities are very easily (and often) used in
+   combination with \textbf{tar}:
+   \begin{cmd}
+$ tar zcvf source.tar.gz  source
+$ tar jcvf source.tar.bz2 source
+$ tar Jcvf source.tar.xz  source
+   \end{cmd}
+   for producing a compressed archive.  Note the first command has the
+   exact same effect as:
+   \begin{cmd}
+$ tar cvf source.tar source ; gzip -v source.tar
+   \end{cmd}
+   but is more efficient because there is no intermediate file storage,
+   and archiving and compression happen simultaneously in the pipeline.
+
+   For decompression:
+   \begin{cmd}
+$ tar xzvf source.tar.gz
+$ tar xjvf source.tar.bz2
+$ tar xJvf source.tar.xz
+   \end{cmd}
+   or even simpler:
+   \begin{cmd}
+$ tar xvf source.tar.gz
+   \end{cmd}
+   as modern versions of \textbf{tar} can sense the method of
+   compression and take care of it automatically.
+
+   Obviously it is not worth using these methods on archives
+   whose component files are already compressed, such as
+   \texttt{} images, or \texttt{.pdf} files etc.
+
+}
+
+

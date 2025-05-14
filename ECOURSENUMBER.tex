@@ -1,0 +1,43 @@
+\newcommand{\ENGLISH}{}
+
+\newif\ifINSTRUCTORLED
+\INSTRUCTORLEDfalse
+
+\newcommand{\course}{COURSENUMBERHERE}
+
+\newcommand{\coursetitle}{Put Course Title Here}
+\newcommand{\elearningcourse}{ELEARNINGCOURSENUMBERHERE}
+\newcommand{\elearningtitle}{ELearning Version Title here}
+
+\newcommand{\arch}{x86}
+\newcommand{\version}{EVERSION}
+\newcommand{\kversion}{\version}
+
+\documentclass{LFD}
+
+\renewcommand{\includefootnote}{}
+\renewcommand{\includelistoftables}{}
+\renewcommand{\includelistoffigures}{}
+
+
+
+\begin{document}
+
+\topshit
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subimport{CHAPS/introduction/}{index}
+\subimport{CHAPS/redchapter/}{index}
+
+\subimport{CHAPS/memmon/}{index}
+\subimport{CHAPS/backups/}{index}
+
+
+\ifINSTRUCTORLED
+   \subimport{CHAPS/closing/}{index}
+\fi
+
+\end{document}
+
+
+

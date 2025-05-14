@@ -1,0 +1,205 @@
+\clearpage\section{Labs}\begin{Lab}
+   \begin{exe} {Using tar for Backup}
+
+      \begin{enumerate}
+         \item
+         Create a directory called \verb?backup? and in it
+         place a compressed \textbf{tar} archive of all the
+         files under \filelink{/usr/include}, with the highest
+         level directory being \verb?include?.  You can use
+         any compression method (\textbf{gzip}, \textbf{bzip2}
+         or \textbf{xzip}).
+         \item
+         List the files in the archive.
+         \item
+         Create a directory called \verb?restore? and
+         unpack and decompress the archive.
+         \item
+         Compare the
+         contents with the original directory the archive
+         was made from.
+      \end{enumerate}
+
+      \begin{sol}
+
+         \begin{enumerate}
+            \item
+            \begin{cmd}
+$ mkdir /tmp/backup
+$ cd /usr ; tar zcvf /tmp/backup/include.tar.gz include
+$ cd /usr ; tar jcvf /tmp/backup/include.tar.bz2 include
+$ cd /usr ; tar Jcvf /tmp/backup/include.tar.xz include
+         \end{cmd}
+            or
+            \begin{cmd}
+$ tar -C /usr -zcf include.tar.gz include
+$ tar -C /usr -jcf include.tar.bz2 include
+$ tar -C /usr -Jcf include.tar.xz include
+         \end{cmd}
+            Notice the efficacy of the compression between the three
+            methods:
+            \begin{cmd}
+$ du -sh /usr/include
+         \end{cmd}
+
+            \begin{out}[]
+55M	/usr/include
+         \end{out}
+            \item
+            \begin{cmd}
+$ ls -lh include.tar.*
+         \end{cmd}
+
+            \begin{out}[]
+c8:/tmp/backup>ls -lh
+total 17M
+-rw-rw-r-- 1 coop coop 5.3M Jul 18 08:17 include.tar.bz2
+-rw-rw-r-- 1 coop coop 6.7M Jul 18 08:16 include.tar.gz
+-rw-rw-r-- 1 coop coop 4.5M Jul 18 08:18 include.tar.xz
+         \end{out}
+            \item
+            \begin{cmd}
+$ tar tvf include.tar.xz
+         \end{cmd}
+
+            \begin{out}[]
+qdrwxr-xr-x root/root         0 2014-10-29 07:04 include/
+-rw-r--r-- root/root     42780 2014-08-26 12:24 include/unistd.h
+-rw-r--r-- root/root       957 2014-08-26 12:24 include/re_comp.h
+-rw-r--r-- root/root     22096 2014-08-26 12:24 include/regex.h
+-rw-r--r-- root/root      7154 2014-08-26 12:25 include/link.h
+.....
+         \end{out}
+            Note it is not necessary to give the \verb?j?,
+            \verb?J?, or \verb?z?  option when decompressing;
+            \textbf{tar} is smart enough to figure out what is
+            needed.
+            \item
+            \begin{cmd}
+$ cd .. ; mkdir restore ; cd restore
+$ tar xvf ../backup/include.tar.bz2
+         \end{cmd}
+
+            \begin{out}[]
+include/
+include/unistd.h
+include/re_comp.h
+include/regex.h
+include/link
+.....
+$ diff -qr include /usr/include
+         \end{out}
+         \end{enumerate}
+      \end{sol}
+   \end{exe}
+
+   \begin{exe} {Using rsync for Backup}
+
+      \begin{enumerate}
+         \item
+         Using \textbf{rsync}, we will again create a complete
+         copy of \filelink{/usr/include} in your backup
+         directory:
+         \begin{cmd}
+$ rm -rf include
+$ rsync -av /usr/include .
+      \end{cmd}
+
+         \begin{out}[]
+sending incremental file list
+include/
+include/FlexLexer.h
+include/_G_config.h
+include/a.out.h
+include/aio.h
+.....
+      \end{out}
+         \item
+         Let's run the command a second time and see if it
+         does anything:
+         \begin{cmd}
+$ rsync -av /usr/include .
+      \end{cmd}
+
+         \begin{out}[]
+sending incremental file list
+
+sent 127398 bytes  received 188 bytes  255172.00 bytes/sec
+total size is 41239979  speedup is 323.23
+      \end{out}
+         \item
+         One confusing thing about \textbf{rsync} is you might
+         have expected the right command to be:
+         \begin{cmd}
+$ rsync -av /usr/include include
+      \end{cmd}
+
+         \begin{out}[]
+sending incremental file list
+...
+      \end{out}
+         However, if you do this, you'll find it actually
+         creates a new directory, \filelink{include/include}!
+         \item
+         To get rid of the extra files you can use the
+         \verb?--delete? option:
+         \begin{cmd}
+$ rsync -av --delete /usr/include .
+      \end{cmd}
+
+         \begin{out}[]
+sending incremental file list
+include/
+deleting include/include/xen/privcmd.h
+deleting include/include/xen/evtchn.h
+....
+deleting include/include/FlexLexer.h
+deleting include/include/
+
+sent 127401 bytes  received 191 bytes  85061.33 bytes/sec
+total size is 41239979  speedup is 323.22
+      \end{out}
+
+         \item For another simple exercise,
+         remove a subdirectory tree in your backup copy and
+         then run \textbf{rsync} again with and without the
+         \verb?--dry-run? option:
+         \begin{cmd}
+$ rm -rf include/xen
+$ rsync -av --delete --dry-run /usr/include .
+      \end{cmd}
+
+         \begin{out}[]
+sending incremental file list
+include/
+include/xen/
+include/xen/evtchn.h
+include/xen/privcmd.h
+
+sent 127412 bytes  received 202 bytes  255228.00 bytes/sec
+total size is 41239979  speedup is 323.16 (DRY RUN)
+      \end{out}
+         \begin{cmd}
+$ rsync -av --delete  /usr/include .
+      \end{cmd}
+         \item  A simple script with a good set of options for using
+         \textbf{rsync}:
+         \begin{shlst}[script using \textbf{rsync}]
+         #!/bin/sh
+         set -x
+
+         rsync --progress -avrxH --delete $*
+      \end{shlst}
+         which will work on a local machine as well as over
+         the network.  Note the important \verb?-x? option
+         which stops \textbf{rsync} from crossing
+         filesystem boundaries.
+      \end{enumerate}
+      \begin{lfbox}[Extra Credit]
+         For more fun, if you have access to more than one computer,
+         try doing these steps with source and destination on different
+         machines.
+      \end{lfbox}
+   \end{exe}
+
+\end{Lab}

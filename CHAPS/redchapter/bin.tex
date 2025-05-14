@@ -1,0 +1,73 @@
+\clearpage
+\section{/bin}
+\begin{frame}
+   {/bin}
+
+   \begin{itemize}
+      \item Contains executable programs and scripts needed by
+      both system administrators and unprivileged users, which
+      are required when no other filesystems have yet been
+      mounted, for example when booting into \textbf{single
+         user} or recovery mode.
+      \item May also contain executables which are used
+      indirectly by scripts.
+      \item May not include any subdirectories.
+
+
+      \begin{lfbox}[\texttt{/bin} and \texttt{/usr/bin}]
+         \normalsize{ Some recent distributions have abandoned
+            the strategy of separating \filelink{/bin} and
+            \filelink{/usr/bin} (as well as \filelink{/sbin} and
+            \filelink{/usr/sbin}) and just have one directory
+            with symbolic links, thereby preserving a two
+            directory view.  They view the time-honored concept
+            of enabling the possibility of placing
+            \filelink{/usr} on a separate partition to be
+            mounted after boot as obsolete.  }
+      \end{lfbox}
+   \end{itemize}
+\end{frame}
+
+\cprotect\note{
+
+Required programs which must exist in \filelink{/bin/}
+include:
+\begin{quote}
+   \textbf{cat, chgrp, chmod, chown, cp, date, dd, df,
+      dmesg, echo, false, hostname, kill, ln, login, ls,
+      mkdir, mknod, more, mount, mv, ps, pwd, rm, rmdir, sed,
+      sh, stty, su, sync, true, umount} and \textbf{uname}.
+\end{quote}
+\textbf{[} and \textbf{test} may be there as well, and
+optionally, it may include:
+\begin{quote}
+   \textbf{csh, ed, tar, cpio, gunzip, zcat, netstat} and
+   \textbf{ping}.
+\end{quote}
+Command binaries that are deemed not essential enough to
+merit a place in \filelink{/bin} go in \filelink{/usr/bin}.
+Programs required only by non-root users are placed in this
+category.
+
+}
+\begin{frame}
+   {/bin Example}
+
+   \begin{figure}[H]
+      \includegraphics[width=6.5in]{IMAGES/lsbin}
+      \caption{/bin Directory: Ubuntu 18.04}
+   \end{figure}
+\end{frame}
+
+\cprotect\note {
+
+   Recent distribution versions of \textbf{RHEL},
+   \textbf{CentOS}, \textbf{Fedora}, and \textbf{Ubuntu}
+   have symbolically linked \filelink{/bin} and
+   \filelink{/usr/bin} so they are actually the same.
+
+   The above screenshot is from \textbf{Ubuntu 18.04}; later
+   versions no longer have a separate un-linked directory.
+
+}
+

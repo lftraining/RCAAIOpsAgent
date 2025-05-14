@@ -1,0 +1,267 @@
+\section{APT}
+
+\begin{frame}
+   {What is APT?}
+
+   \begin{itemize}
+      \item Stands for \textbf{A}dvanced \textbf{P}ackaging
+      \textbf{T}ool
+      \item Includes utilities such as \textbf{apt} and
+      \textbf{apt-cache} (which invoke the lower level
+      \textbf{dpkg} program)
+      \item Works with \textbf{Debian} packages (\texttt{.deb}
+      file extension)
+      \item Not uncommon to use a repository on more than one
+      \textbf{Debian}-based \textbf{Linux} distribution.
+   \end{itemize}
+   \begin{info}[apt vs apt-get]
+      For almost all interactive purposes, it is no longer necessary
+      to use \textbf{apt-get}; one can just use the shorter
+      name \textbf{apt}.  However, you will see \textbf{apt-get}
+      used all the time out of habit, and it works better in
+      scripts.  In this course we sometimes use \textbf{apt-get}
+      because the commands we reference can be used either
+      at the command line or in scripts.
+   \end{info}
+
+\end{frame}
+
+\cprotect\note {
+
+   For use on \textbf{Debian}-based systems, the
+   \textbf{APT} (\textbf{A}dvanced \textbf{P}ackaging
+   \textbf{T}ool) set of programs provides a higher level
+   of intelligent services for using the underlying
+   \textbf{dpkg} program, and plays the same role as
+   \textbf{dnf} on \textbf{Red Hat}-based systems.  The
+   main utilities are \textbf{apt} and
+   \textbf{apt-cache}.  It can automatically resolve
+   dependencies when installing, updating and removing
+   packages.  It accesses external software
+   \textbf{repositories}, synchronizing with them and
+   retrieving and installing software as needed.
+
+   Once again we are going to ignore graphical interfaces
+   (on your computer) such as \textbf{synaptic} or the
+   \textbf{Ubuntu Software Center}, or other older front
+   ends to \textbf{APT} such as \textbf{aptitude}.
+
+
+}
+
+\section{APT Utilities}
+\begin{frame}
+   {apt, apt-get, apt-cache, etc.}
+
+   \begin{itemize}
+      \item Command-line tools for handling packages for
+      \textbf{Debian Linux}
+      \begin{itemize}
+         \item Install/manage individual packages
+         \item Upgrade packages
+         \item Upgrade distribution
+      \end{itemize}
+      \item Front-ends to \textbf{dpkg}
+      \item Also can retrieve packages from repositories
+      \item Excellent resources for searching, examining and
+      downloading packages:
+
+      \url{https://www.debian.org/distrib/packages}
+
+      \url{https://packages.ubuntu.com}
+
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   These utilities  are the \textbf{APT} command line
+   tools for package management.   They can be used to install,
+   manage and upgrade individual packages or the entire
+   system, and can even upgrade the distribution to a
+   completely new release, which can be a difficult task.
+
+   There are even (imperfect) extensions that let
+   \textbf{apt} work with \textbf{rpm} files.
+
+   Like \textbf{dnf} and \textbf{zypper}, \textbf{APT}  works with
+   multiple remote repositories.
+
+}
+
+\section{Queries}
+\begin{frame}
+   {Queries}
+
+   \begin{itemize}
+      \item \textbf{apt-cache}
+      \begin{cmd}
+$ apt-cache search
+$ apt-cache show
+$ apt-cache showpkg
+$ apt-cache depends
+      \end{cmd}
+      \item \textbf{apt-file}
+      \begin{cmd}
+$ apt-file search
+$ apt-file list
+      \end{cmd}
+      \item
+      You may have to install \textbf{apt-file} first and
+      update its database as in:
+      \begin{cmd}
+$ sudo apt install apt-file
+$ sudo apt-file update
+      \end{cmd}
+
+   \end{itemize}
+
+
+\end{frame}
+
+\cprotect\note{
+
+   \begin{cmd}
+$ apt-cache search apache2
+   \end{cmd}
+   Search the repository for a package named \textbf{apache2}.
+
+   \begin{cmd}
+$ apt-cache show apache2
+   \end{cmd}
+   Display basic information about the \textbf{apache2}
+   package.
+
+   \begin{cmd}
+$ apt-cache showpkg apache2
+   \end{cmd}
+   Display detailed information about the
+   \textbf{apache2} package.
+
+   \begin{cmd}
+$ apt-cache depends apache2
+   \end{cmd}
+   List all dependent packages for \textbf{apache2}.
+
+   \begin{cmd}
+$ apt-file search apache2.conf
+   \end{cmd}
+   Search the repository for a file named
+   \filelink{apache2.conf}.
+
+   \begin{cmd}
+$ apt-file list apache2
+   \end{cmd}
+   List all files in the \textbf{apache2} package.
+
+
+}
+
+\clearpage
+\section{Installing/Removing/Upgrading Packages}
+\begin{frame}
+   {Installing/Removing/Upgrading Packages}
+   \begin{itemize}
+      \item
+      Install and remove packages:
+      \begin{cmd}
+$ sudo apt install glibc
+$ sudo apt remove glibc
+$ sudo apt --purge remove glibc
+      \end{cmd}
+
+      \item
+      \textbf{update} repository databases and then
+      \textbf{upgrade} system or packages:
+      \begin{cmd}
+$ sudo apt update
+$ sudo apt upgrade
+$ sudo apt dist-upgrade
+      \end{cmd}
+      \begin{important}[No individual pakage uprades]
+         Unlike with \textbf{dnf} or \textbf{zypper}, one
+         never updates/upgrades individual packages; the entire
+         package list is dealt with as a unit.
+      \end{important}
+   \end{itemize}
+\end{frame}
+
+\cprotect\note{
+
+
+
+   \begin{cmd}
+$ sudo apt install [package]
+   \end{cmd}
+   Used to install new packages or update a package which
+   is already installed.
+
+   \begin{cmd}
+$ sudo apt remove [package]
+   \end{cmd}
+   Used to remove a package from the system. This does
+   not remove the configuration files.
+
+   \begin{cmd}
+$ sudo apt --purge remove [package]
+   \end{cmd}
+   Used to remove a package and its configuration files
+   from a system.
+   \begin{cmd}
+$ sudo apt update
+   \end{cmd}
+   Used to synchronize the package index files with
+   their sources. The indexes of available packages are
+   fetched from the location(s) specified in
+   \filelink{/etc/apt/sources.list}.
+
+   \begin{cmd}
+$ sudo apt upgrade
+$ sudo apt dist-upgrade
+   \end{cmd}
+   \verb?upgrade? is used to apply all available updates to
+   packages already installed.  \verb?dist-upgrade? will not
+   update to a whole new distribution version
+   as is commonly misunderstood.
+
+   Note that you must \textbf{update} before you
+   \textbf{upgrade}, unlike with \textbf{dnf}
+   or \textbf{zypper}, which can be confusing to habitual
+   users of those utilities.
+
+}
+
+\section{Cleaning Up}
+\begin{frame}
+   {Cleaning Up}
+
+   \begin{itemize}
+
+      \item Get rid of any packages not needed anymore, such as
+      older \textbf{Linux} kernel versions:
+      \begin{cmd}
+$ sudo apt autoremove
+      \end{cmd}
+
+      \item
+      Clean out cache files and any archived package files
+      that have been installed:
+      \begin{cmd}
+$ sudo apt clean
+      \end{cmd}
+      This can save a lot of space.
+
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note {
+
+   Using \textbf{apt clean} and \textbf{apt autoremove} is a quick and fairly safe way to free up disk space in
+   \filelink{/var} when disk space is low.
+
+}
+
+
+

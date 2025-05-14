@@ -1,0 +1,131 @@
+\section{Out of Memory Killer (OOM)}
+
+\begin{frame}
+   {OOM Killer}
+
+   \begin{itemize}
+      \item
+      Systems may run out of physical memory.  One can:
+      \begin{enumerate}
+         \item Deny any further memory requests until memory is freed up
+         \item Extend physical memory by the use of \textbf{swap} space
+         \item Terminate (intelligently) selected processes to reduce memory usage
+         and let the system survive
+      \end{enumerate}
+      \item \textbf{Linux} systems most often implement the second and third
+      methods
+      \item Which processes are terminated is selected by the
+      \textbf{OOM} killer
+   \end{itemize}
+\end{frame}
+
+\cprotect\note{
+
+   The simplest way to deal with memory pressure would be to
+   permit memory allocations to succeed as long as free memory
+   is available and then fail when all memory is exhausted.
+
+   The second simplest way is to use swap space on disk to push
+   some of the resident memory out of core; in this case, the
+   total available memory (at least in theory) is the actual
+   RAM plus the size of the swap space. The hard part of this
+   is to figure out which pages of memory to swap out when
+   pressure demands. In this approach, once the swap space
+   itself is filled, requests for new memory must fail.
+
+   Linux, however, goes one better; it permits the system to
+   overcommit memory, so that it can grant memory requests that
+   exceed the size of RAM plus swap. While this might seem
+   foolhardy, many (if not most) processes do not use all
+   requested memory.
+
+   An example would be a program that allocates a 1 MB buffer,
+   and then uses only a few pages of the memory. Another
+   example is that every time a child process is forked, it
+   receives a copy of the entire memory space of the
+   parent. Because Linux uses the COW (copy on write)
+   technique, unless one of the processes modifies memory, no
+   actual copy needs be made. However, the kernel has to assume
+   that the copy might need to be done.
+
+   Thus, the kernel permits overcommission of memory, but only
+   for pages dedicated to user processes; pages used within the
+   kernel are not swappable and are always allocated at request
+   time.
+
+
+}
+
+\begin{frame}
+   {OOM Killer Algorithms}
+
+   \begin{itemize}
+
+      \item
+      Heuristic algorithm is not intended to be depended on for
+      normal operations.  Is there more for a graceful shutdown or
+      retrenchment
+      \item
+      Process selection depends on a \textbf{badness} value which can
+      be read from \filelink{/proc/[pid]/oom_score} for each process
+      \item
+      Adjustments can be made to a process's \file{oom\_adj\_score} in the
+      same directory for each task.
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   One can modify, and even turn off overcommission by
+   setting the value of
+   \filelink{/proc/sys/vm/overcommit_memory}:
+   \begin{itemize}
+
+      \item 0: (default) Permit overcommission, but refuse
+      obvious overcommits, and give root users somewhat more
+      memory allocation than normal users.
+
+      \item 1: All memory requests are allowed to overcommit.
+
+      \item 2: Turn off overcommission. Memory requests will fail
+      when the total memory commit reaches the size of the
+      swap space plus a configurable percentage (50 by
+      default) of RAM. This factor is modified changing
+      \filelink{/proc/sys/vm/overcommit_ratio}.
+
+   \end{itemize}
+   An amusing take on this was given by Andries Brouwer
+   (\url{https://lwn.net/Articles/104185/}):
+
+   \begin{quote}\small{
+
+         An aircraft company discovered that it was cheaper to
+         fly its planes with less fuel on board. The planes
+         would be lighter and use less fuel and money was saved.
+         On rare occasions however the amount of fuel was
+         insufficient, and the plane would crash. This problem
+         was solved by the engineers of the company by the
+         development of a special OOF (out-of-fuel) mechanism.
+         In emergency cases a passenger was selected and thrown
+         out of the plane. (When necessary, the procedure was
+         repeated.) A large body of theory was developed and
+         many publications were devoted to the problem of
+         properly selecting the victim to be ejected. Should the
+         victim be chosen at random? Or should one choose the
+         heaviest person? Or the oldest? Should passengers pay
+         in order not to be ejected, so that the victim would be
+         the poorest on board? And if for example the heaviest
+         person was chosen, should there be a special exception
+         in case that was the pilot? Should first class
+         passengers be exempted? Now that the OOF mechanism
+         existed, it would be activated every now and then, and
+         eject passengers even when there was no fuel shortage.
+         The engineers are still studying precisely how this
+         malfunction is caused.
+      }
+   \end{quote}
+
+
+
+}

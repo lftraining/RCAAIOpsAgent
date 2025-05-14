@@ -1,0 +1,229 @@
+\section{Memory Monitoring and Tuning}
+\begin{frame}
+   {Memory Monitoring}
+
+   Important tools for monitoring and tuning memory in \textbf{Linux}
+
+   \lftable{Memory Monitoring Utilities}
+
+   \small{\begin{tcolorbox}[tabularx={p{0.25\textwidth}|X|p{0.25\textwidth}}]
+
+         \textbf{Utility}
+         &
+         \textbf{Purpose}
+         &
+         \textbf{Package}
+         \\ \hline
+         \textbf{free}
+         &
+         Brief summary of memory usage
+         &
+         procps
+         \\ \hline
+         \textbf{vmstat}
+         &
+         Detailed virtual memory statistics and block I/O,
+         dynamically updated
+         &
+         procps
+         \\ \hline
+         \textbf{pmap}
+         &
+         Process memory map
+         &
+         procps
+      \end{tcolorbox}}
+
+   \begin{cmd}
+$ free -m
+   \end{cmd}
+
+   \begin{out}[]
+           total     used     free      shared  buff/cache   available
+Mem:       15901     2080     9317         992        4502       12457
+Swap:       8095        0     8095
+   \end{out}
+
+
+\end{frame}
+
+\cprotect\note{
+
+   Over time, systems have become more demanding of
+   memory resources at the same time RAM prices have
+   decreased and performance has improved.
+
+   Yet, it is often the case that bottlenecks in
+   overall system performance and throughput are
+   memory-related; the CPUs and the I/O subsystem can
+   be waiting for data to be retrieved from or written
+   to memory.
+
+   There are many tools for monitoring, debugging and tuning
+   a system's behavior with regard to its memory.
+
+   Tuning the memory sub-system can be a complex
+   process. First of all, one has to take note that memory
+   usage and I/O throughput are intrinsically related, as, in
+   most cases, most memory is being used to cache the
+   contents of files on disk.
+
+   Thus, changing memory parameters can have a large effect
+   on I/O performance, and changing I/O parameters can have
+   an equally large converse effect on the virtual memory
+   sub-system.
+
+}
+\clearpage
+\begin{frame}
+   {/proc/meminfo}
+
+   \begin{cmd}
+$ cat /proc/meminfo
+   \end{cmd}
+
+   %%   \begin{multicols}{3}
+   \respfile{meminfo.output}
+   %%   \end{multicols}
+\end{frame}
+
+\cprotect\note{
+
+   The pseudo file \filelink{/proc/meminfo} contains a wealth of
+   information about how memory is being used.
+
+}
+\section{/proc/sys/vm}
+
+\begin{frame}
+   {/proc/sys/vm}
+
+   \begin{itemize}
+
+      \item
+      Contains many tunable knobs to
+      control the Virtual Memory system
+      \item
+      Almost all of the entries are writable (by root)
+
+      \item
+      Exactly what appears in
+      this directory will depend somewhat on the kernel
+      version.
+
+      \item
+      Values can be changed either by directly
+      writing to the entry, or using \textbf{sysctl}
+
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   When tweaking parameters in \filelink{/proc/sys/vm}, the
+   usual best practice is to adjust one thing at a time and
+   look for effects. The primary (inter-related) tasks are:
+
+   \begin{itemize}
+      \item
+      Controlling flushing parameters; i.e., how many pages
+      are allowed to be dirty and how often they are flushed
+      out to disk.
+      \item
+      Controlling swap behavior; i.e., how much pages that
+      reflect file contents are allowed to remain in memory,
+      as opposed to those that need to be swapped out as they
+      have no other backing store.
+      \item
+      Controlling how much memory overcommission is allowed,
+      since many programs never need the full amount of memory
+      they request, particularly because of copy on write
+      (COW) techniques.
+   \end{itemize}
+   Memory tuning can be subtle: what works in one
+   system situation or load may be far from optimal in other
+   circumstances.
+
+   \begin{figure}[H]
+      \includegraphics[width=5.25in]{IMAGES/procsysvm}
+      \caption{/proc/sys/vm}
+   \end{figure}
+
+}
+\section{vmstat}
+\begin{frame}
+   {vmstat}
+
+   \begin{itemize}
+
+      \item
+      Displays information about memory, paging, I/O, processor
+      activity and processes.
+
+      \item
+      Many options
+      \begin{cmd}
+$ vmstat [options] [delay] [count]
+      \end{cmd}
+
+      \item
+      \verb?delay? is given in seconds, report is repeated \verb?count? times.
+
+      \item
+      First line shows averages since the last
+      reboot
+      \item
+      Succeeding lines show activity during the
+      specified interval.
+   \end{itemize}
+
+   \begin{figure}[H]
+      \includegraphics[width=6in]{IMAGES/vmstat}
+      \caption{vmstat}
+   \end{figure}
+
+\end{frame}
+
+\cprotect\note{
+
+   If the option \verb?-S m? is given, memory statistics will
+   be in MB instead of KB.
+
+   With the \verb?-a? option, \textbf{vmstat} displays
+   information about active and inactive memory pages:
+   active pages are those recently used; they may be clean
+   (disk contents are up to date) or dirty (need to be
+   flushed to disk eventually). By contrast, inactive memory
+   pages have not been recently used and are more likely to
+   be clean and are released sooner under memory pressure:
+
+   Memory moves back and forth between active and inactive
+   lists, with new references, or a long time
+   between uses.
+
+   \begin{figure}[H]
+      \includegraphics[width=4.9in]{IMAGES/vmstata}
+      \caption{Using vmstat}
+   \end{figure}
+
+   \vspace{-24pt}
+
+   If you just want to get some quick statistics on only one
+   partition, use the \verb?-p? option
+
+   \begin{figure}[H]
+      \includegraphics[width=4.9in]{IMAGES/vmstatp}
+      \caption{Using vmstat on One Disk}
+   \end{figure}
+   \vspace{-24pt}
+
+}
+
+
+
+
+
+
+
+

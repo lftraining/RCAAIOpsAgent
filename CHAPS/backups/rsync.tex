@@ -1,0 +1,70 @@
+\section{rsync}
+\begin{frame}
+   {Using rsync for Backups}
+
+   \begin{itemize}
+      \item
+      Usage:
+      \begin{cmd}
+$ rsync [options] sourcefile destinationfile
+      \end{cmd}
+      \item
+      Between local machine and a network target:
+      \begin{cmd}
+$ rsync file.tar someone@backup.mydomain:/usr/local
+      \end{cmd}
+      \item
+      Test before doing with \verb?--dry-run?:
+      \begin{cmd}
+$ rsync -r --dry-run /usr/local /BACKUP/usr
+      \end{cmd}
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   \textbf{rsync} (\textbf{r}emote \textbf{sync}hronize)
+   is used to transfer files across a network (or between
+   different locations on the same machine).
+
+   The source and destination can take the form of
+   \texttt{target:path} where \texttt{target} can be in
+   the form of \texttt{[user@]host}.  The \texttt{user@}
+   part is optional and used if the remote user is
+   different from the local user.  Thus, these are all
+   possible \textbf{rsync} commands:
+   \begin{cmd}
+$ rsync file.tar someone@backup.mydomain:/usr/local
+$ rsync -r --dry-run /usr/local /BACKUP/usr
+   \end{cmd}
+   You have be very careful with \textbf{rsync} about
+   exact location specifications (especially if you use
+   the \verb?--delete? option), so it is highly
+   recommended to use the \verb?--dry-run? option
+   first, and then repeat the command if the projected
+   action looks correct.
+
+   \textbf{rsync} is very clever; it checks local files
+   against remote files in small chunks, and it is very
+   efficient in that when copying one directory to a
+   similar directory, only the differences are copied over
+   the network
+   with the first directory.  One often uses the
+   \texttt{-r} option which causes \textbf{rsync} to
+   recursively walk down the directory tree copying all
+   files and directories below the one listed as the
+   \texttt{sourcefile}.  Thus, a very useful way to back
+   up a project directory might be similar to:
+
+   \begin{cmd}
+$ rsync -r project-X archive-machine:archives/project-X
+   \end{cmd}
+
+   A simple (and very effective and very fast) backup
+   strategy is to simply duplicate directories or
+   partitions across a network with \textbf{rsync}
+   commands and to do so frequently.
+
+}
+

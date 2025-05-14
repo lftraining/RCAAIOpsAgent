@@ -1,0 +1,338 @@
+\section{Backup Basics}
+
+\begin{frame}
+   {Why Backups?}
+
+   \begin{itemize}
+      \item Data is valuable
+      \item Hardware fails
+      \item Software fails
+      \item People make mistakes
+      \item Malicious people can cause deliberate damage
+      \item Unexplained events happen
+      \item Rewinds can be useful
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{ Whether you are administering only one personal
+   system or a network of many machines, system backups
+   are very important
+
+   On-disk data is an important work product and is
+   therefore a commodity that we wish to
+   protect. Re-creating lost data costs time and money.
+   Some data may even be unique and there may be no way to
+   re-create it.
+
+   While storage media reliability has increased, so has
+   drive capacity. Even if the failure rate per byte
+   decreases, unpredictable failures still occur.  It may
+   be pessimistic to say there are only two kinds of
+   drives; those that have failed and those that will
+   fail, but it is essentially true.  Using \textbf{RAID}
+   helps but backups are still needed.
+
+   No software is perfect.  Bugs may destroy or corrupt
+   data.  Even stable programs long in use can have
+   problems.
+
+   Everyone has heard \textbf{OOPS!} (or something much
+   worse) coming from the next cubicle (or from their own
+   mouth) at one time or another. Sometimes just a simple
+   typing error can cause large scale destruction of files
+   and data.
+
+   It could be the canonical disgruntled employee or an
+   external hacker with a point to make.  Security
+   concerns and backup capabilities are very strongly
+   related.
+
+   Files can just disappear without you knowing how, who,
+   or even when it occurred.
+
+   Sometimes restoring to an earlier \textbf{snapshot} of
+   all or part of the system may be required.
+}
+
+
+
+\begin{frame}
+   {What Do We Need to Backup?}
+
+   \begin{itemize}
+      \item Definitely:
+      \begin{itemize}
+         \item Business-related data.
+         \item System configuration files.
+         \item User files (usually under \filelink{/home}).
+      \end{itemize}
+      \item Maybe:
+      \begin{itemize}
+         \item Spooling directories (for printing, mail etc.)
+         \item Logging files (found in \filelink{/var/log}, and
+         elsewhere).
+      \end{itemize}
+      \item Probably not:
+      \begin{itemize}
+         \item Software that can easily be re-installed; on a
+         well-managed system this should be almost everything.
+         \item The \filelink{/tmp} directory
+      \end{itemize}
+      \item Definitely not:
+      \begin{itemize}
+         \item Pseudo filesystems such as \filelink{/proc},
+         \filelink{/dev} and \filelink{/sys}, and swap
+      \end{itemize}
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   Obviously, files essential to your organization require
+   backup.  Configuration files may change frequently, and
+   along with individual user's files, require backup as
+   well.
+
+   Logging files can be important if you have to
+   investigate your system's history, which can be
+   particularly important for detecting intrusions and
+   other security violations.
+
+   You do not have to back up anything that can easily be
+   re-installed.  Also the swap partitions (or files) and
+   \filelink{/proc} filesystems are generally not useful
+   or necessary to backup since data in these areas is
+   basically temporary (just like in the \filelink{/tmp}
+   directory).
+
+}
+\section{Backup vs Archive}
+\begin{frame}
+   {Backup vs Archive}
+
+   \begin{itemize}
+      \item
+      All backup media have a finite life time before becoming
+      unreadable
+      \item
+      Conventional Estimates:
+      \begin{itemize}
+         \item Magnetic Tapes: 10-30 years
+         \item CDs and /DVDs: 3-10 years
+         \item Hard Disks: 2-5 years
+      \end{itemize}
+      \item Lifetime very sensitive to:
+      \begin{itemize}
+         \item Environmental conditions (temperature, humidity
+         etc.)
+         \item Quality of media
+         \item Having working software that can read data on current
+         operating systems and hardware
+      \end{itemize}
+      \item Lifetime is sufficient for backup; not for permanent
+      digital archiving
+   \end{itemize}
+\end{frame}
+
+\cprotect\note{
+
+   For life times longer than the usual backup timescale,
+   data can be preserved using multiple copies plus copying
+   over to newer media from time to time.
+
+   For very long times (i.e., many decades, centuries etc.)
+   standard methods do not work easily as everything can go
+   obsolete:
+   \begin{itemize}
+      \item Hardware
+      \item Software and Document Format
+      \item Media
+   \end{itemize}
+   None of the inexpensive digital formats can actually
+   compete with paper and film for long periods (if they are
+   properly stored and continuously cared for -- like wine.)
+
+   This is a problem serious people think about and there
+   should be good solutions available before all is lost.  }
+
+
+\begin{frame}
+   {Tape Drives}
+   \begin{itemize}
+      \item Relatively slow
+      \item Permit only sequential access
+      \item Not as common as they once were
+      \item Rarely used for primary backup today
+      \item Still sometimes useful for off-site storage and archiving
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   Tape drives are not as common as they used to be. They are
+   relatively slow and permit only sequential access.  On any
+   modern setup they are rarely used for primary backup.  They
+   are sometimes used for off-site storage for archival
+   purposes for long time references.  However, magnetic tape
+   drives always have only a finite lifetime without physical
+   degradation and loss of data.
+
+   Modern tape drives are usually of the \textbf{LTO}
+   (\textbf{L}inear \textbf{T}ape \textbf{O}pen) variety,
+   whose first versions appeared in the late 1990s as an open
+   standards alternative; early formats were mostly
+   proprietary.  Early versions held up to 100 GB; newer
+   versions can hold 2.5 TB or more in a cartridge of the same
+   size.
+
+   Day to day backups are usually done with some form of
+   \textbf{NAS} (\textbf{N}etwork \textbf{A}ttached
+   \textbf{S}torage) or with \textbf{cloud}-based solutions,
+   making new tape-based installations less and less
+   attractive.  However, they can still be found and system
+   administrators may be required to deal with them.
+
+   In what follows we will try not to focus on particular
+   physical forms for the backup media, and will speak more
+   abstractly.
+
+}
+\section{Backup Methods and Strategies}
+\begin{frame}
+   {Backup Methods}
+
+   \begin{itemize}
+      \item \textbf{Full}:
+
+      Backup all files on the system.
+      \item \textbf{Incremental}:
+
+      Backup all files that have changed since the last
+      incremental or full backup.
+      \item \textbf{Differential}:
+
+      Backup all files that have changed since the last full
+      backup.
+      \item \textbf{Multiple level incremental}:
+
+      Backup all files that have changed since the previous
+      backup at the same or a previous level.
+      \item \textbf{User}:
+
+      Backup only files in a specific user's directory.
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   Several different kinds of backup methods can be used, often
+   in concert with each other as listed.
+
+   One should never have all backups residing in the same physical
+   location as the systems being protected.  Otherwise, fire or other
+   physical damage could lead to a total loss.  In the past this usually
+   meant physically transporting magnetic tapes to a secure location.
+   Today this is more likely to mean transferring backup files over the
+   Internet to alternative physical locations.  Obviously, this has to
+   be done in a secure way using encryption and other security
+   precautions as is appropriate.
+
+}
+
+\begin{frame}
+   {Backup Strategies}
+
+   One useful strategy involving tapes (you can easily
+   substitute other media in the description):
+
+   \begin{enumerate}
+      \item Use tape 1 for a full backup on Friday.
+      \item Use tapes 2-5 for incremental backups on
+      Monday-Thursday.
+      \item Use tape 6 for full backup on second Friday.
+      \item Use tapes 2-5 for incremental backups on second
+      Monday-Thursday.
+      \item Do not overwrite tape 1 until completion of full
+      backup on tape 6.
+      \item After full backup to tape 6, move tape 1 to
+      external location for disaster recovery.
+      \item For next full backup (next Friday) exchange tape 1
+      for tape 6.
+   \end{enumerate}
+
+\end{frame}
+
+\cprotect\note{
+
+   We should note that backup methods are useless without
+   associated \textbf{restore} methods.  One has to take
+   into account the robustness, clarity and ease of both
+   directions when selecting strategies.
+
+   A good rule of thumb is to have at least two weeks of
+   backups available.
+
+   The simplest backup scheme is to do a full backup of
+   everything once, and then perform incremental backups
+   of everything that subsequently changes.  While full
+   backups can take a lot of time, restoring from
+   incremental backups can be more difficult and time
+   consuming. Thus, one can use a mix of both to optimize
+   time and effort.
+
+}
+
+
+\begin{frame}
+   {Some Backup Related Utilities}
+
+   \begin{itemize}
+      \item \textbf{cpio}
+      \item \textbf{tar}
+      \item \textbf{gzip, bzip2, xz}
+      \item \textbf{dd}
+      \item \textbf{rsync}
+      \item \textbf{dump/restore}
+      \item \textbf{mt}
+
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   \textbf{cpio} and \textbf{tar} create and extract
+   \textbf{archives} of files.
+
+   The archives are often compressed with \textbf{gzip},
+   \textbf{bzip2}, or \textbf{xz}.  The archive file may
+   be written to disk, magnetic tape, or any other device
+   which can hold files.  Archives are very useful for
+   transferring files from one filesystem or machine to
+   another.
+
+   \textbf{dd} is a powerful utility often used to
+   transfer raw data between media.  It can be used to
+   copy entire partitions or entire disks.
+
+   \textbf{rsync} is a powerful utility that can synchronize
+   directory subtrees or entire filesystems across a
+   network, or between different filesystem locations on
+   a local machine.
+
+   \textbf{dump} and \textbf{restore} are ancient
+   utilities which were designed specifically for backups.
+   They read from the filesystem directly (which is more
+   efficient).  However, they must be restored only on the
+   same filesystem type that they came from.  There are
+   newer alternatives.
+
+   \textbf{mt} is used for querying and positioning tapes
+   before performing backups and restores.
+
+}
+

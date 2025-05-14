@@ -1,0 +1,185 @@
+\clearpage\section{Labs}\begin{Lab}
+
+   \ifINSTRUCTORLED
+      \begin{videobox}
+         \begin{alltt}
+\reslink{using_package_gui_ubuntu_demo.mp4} \end{alltt}
+      \end{videobox}
+   \fi
+
+   \setcounter{labno}{-1}
+   \begin{exe} {dpkg Required}
+
+      \begin{debianfamilybox}
+         To do these labs you need to have access to a system that
+         is \textbf{Debian}-based, such as \textbf{Debian},
+         \textbf{Ubuntu}, or \textbf{Linux Mint}.
+      \end{debianfamilybox}
+   \end{exe}
+
+   \begin{exe} {Basic APT Commands}
+
+
+      \begin{enumerate}
+         \item
+         Check to see if there are any available updates for
+         your system.
+         \item
+         List all installed kernel-related packages, and list
+         all installed or available ones.
+         \item
+         Install the \textbf{apache2-dev} package, or anything
+         else you might not have installed yet.  Doing a simple:
+         \begin{cmd}
+$ apt-cache pkgnames
+      \end{cmd}
+
+         will let you see a complete list; you may want to give a wildcard
+         argument to narrow the list.
+      \end{enumerate}
+
+      \begin{sol}
+
+         \begin{enumerate}
+            \item
+            First synchronize the package index files with
+            remote repositories:
+            \begin{cmd}
+$ sudo apt update
+         \end{cmd}
+            To actually upgrade:
+            \begin{cmd}
+$ sudo apt upgrade
+$ sudo apt -u upgrade
+         \end{cmd}
+            (You can also use \verb?dist-upgrade? as
+            discussed earlier.)  Only the first form will
+            try to do the installations.
+            \item
+            \begin{cmd}
+$ apt-cache search "kernel"
+$ apt-cache search -n "kernel"
+$ apt-cache pkgnames "kernel"
+         \end{cmd}
+            The second and third forms only find packages
+            that have \verb?kernel?  in their name.
+            \begin{cmd}
+$ dpkg --get-selections "*kernel*"
+         \end{cmd}
+            to get only installed packages.  Note that on
+            \textbf{Debian}-based systems you probably
+            should use \verb?linux? not \verb?kernel? for
+            kernel-related packages as they don't usually
+            have \verb?kernel? in their name.
+            \item
+            \begin{cmd}
+$ sudo apt install apache2-dev
+         \end{cmd}
+         \end{enumerate}
+
+      \end{sol}
+
+   \end{exe}
+
+   \begin{exe} {Using APT to Find Information About a Package}
+
+      Using \textbf{apt-cache} and \textbf{apt}
+      (and not \textbf{dpkg}), find:
+
+      \begin{enumerate}
+         \item
+         All packages that contain a reference to
+         \textbf{bash} in their name or description.
+         \item
+         Installed and available \textbf{bash} packages.
+         \item
+         The package information for \textbf{bash}.
+         \item
+         The dependencies for the \textbf{bash} package.
+      \end{enumerate}
+
+      Try the commands you used above both as \texttt{root}
+      and as a regular user. Do you notice any difference?
+
+      \begin{sol}
+
+         \begin{enumerate}
+            \item
+            \begin{cmd}
+$ apt-cache search bash
+         \end{cmd}
+            \item
+            \begin{cmd}
+$ apt-cache search -n bash
+         \end{cmd}
+            \item
+            \begin{cmd}
+$ apt-cache show bash
+         \end{cmd}
+            \item
+            \begin{cmd}
+$ apt-cache depends bash
+$ apt-cache rdepends bash
+         \end{cmd}
+         \end{enumerate}
+      \end{sol}
+   \end{exe}
+
+   \begin{exe} {Managing Groups of Packages with \textbf{APT}}
+
+      \textbf{APT} provides the ability to manage groups of
+      packages, similarly to the way \textbf{dnf} does it,
+      through the use of \textbf{metapackages}.  These can
+      be thought of as \textbf{virtual packages}, that collect
+      related packages that must be installed and
+      removed as a group.
+
+      To get a list of of available \textbf{metapackages}:
+      \begin{cmd}
+$ apt-cache search metapackage
+   \end{cmd}
+
+      \begin{out}[]
+bacula - network backup service - metapackage
+bacula-client - network backup service - client metapackage
+bacula-server - network backup service - server metapackage
+cloud-utils - metapackage for installation of upstream cloud-utils source
+compiz - OpenGL window and compositing manager
+emacs - GNU Emacs editor (metapackage)
+....
+   \end{out}
+      You can then easily install them like regular single
+      packages, as in:
+      \begin{cmd}
+$ sudo apt install bacula-client
+   \end{cmd}
+
+      \begin{out}[]
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following extra packages will be installed:
+  bacula-common bacula-console bacula-fd bacula-traymonitor
+Suggested packages:
+  bacula-doc kde gnome-desktop-environment
+The following NEW packages will be installed:
+  bacula-client bacula-common bacula-console bacula-fd bacula-traymonitor
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Need to get 742 kB of archives.
+After this operation, 1,965 kB of additional disk space will be used.
+Do you want to continue? [Y/n]
+   \end{out}
+      Select an uninstalled metapackage and then remove it.
+   \end{exe}
+
+\end{Lab}
+
+
+
+
+
+
+
+
+
+

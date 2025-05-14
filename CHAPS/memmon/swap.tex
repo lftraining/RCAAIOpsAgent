@@ -1,0 +1,79 @@
+\clearpage
+\section{Swap}
+\begin{frame}
+   {Using swap}
+
+   \begin{itemize}
+      \item Virtual memory on disk
+      \item Create swap partition in \textbf{fdisk}
+      \item \textbf{mkswap}: format swap partitions or files
+      \item \textbf{swapon}: activate swap partitions or files
+      \item \textbf{swapoff}: deactivate swap partitions or files
+      \item Can mount at boot time (using
+      \filelink{/etc/fstab})
+      \item Can have more than one swap partition
+   \end{itemize}
+   \begin{cmd}
+$ cat /proc/swaps
+   \end{cmd}
+
+   \begin{out}[]
+Filename           Type            Size    Used    Priority
+/dev/sda6          partition       8290300 0       -1
+/tmp/swpfile       file            102396  0       -2
+   \end{out}
+
+\end{frame}
+
+\cprotect\note{
+
+   \textbf{Linux} employs a \textbf{virtual memory} system
+   in which the operating system can function as if it had
+   more memory than it really does. This kind of memory
+   \textbf{overcommission} functions in two ways:
+   \begin{itemize}
+      \item
+
+      Many programs do not actually use all the memory they
+      are given permission to use. Sometimes this is
+      because child processes inherit a copy of the
+      parent's memory regions utilizing a \textbf{COW}
+      (\textbf{C}opy \textbf{O}n \textbf{W}rite) technique
+      in which the child only obtains a unique copy (on a
+      page by page basis) when there is a change.
+
+      \item When memory pressure becomes important less
+      active memory regions may be \textbf{swapped} out to
+      disk, to be recalled only when needed again.
+   \end{itemize}
+
+   Such swapping is usually done to one or more dedicated
+   partitions or files; \textbf{Linux} permits multiple
+   \textbf{swap areas} so the needs can be adjusted
+   dynamically. Each area has a priority and lower
+   priority areas are not used until higher priority areas
+   are filled.
+
+   In most situations the recommended swap size is the
+   total \textbf{RAM} on the system. You can see what your
+   system is currently using for swap areas with
+   \texttt{cat /proc/swaps} and report on current usage
+   with \texttt{free}.  At any given time most memory is
+   in use for caching file contents to prevent actually
+   going to the disk any more than necessary, or in a
+   sub-optimal order or timing. Such pages of memory are
+   never swapped out as the backing store is the files
+   themselves, so writing out to swap would be pointless;
+   instead \textbf{dirty} pages (memory containing updated
+   file contents that no longer reflect the stored data)
+   are flushed out to disk.
+
+   It is also worth pointing out that in \textbf{Linux}
+   memory used by the kernel itself, as opposed to
+   application memory, is \textbf{never swapped} out, in
+   distinction to some other operating systems.
+
+}
+
+
+

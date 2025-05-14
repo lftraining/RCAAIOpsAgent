@@ -1,0 +1,162 @@
+\section{tar}
+\begin{frame}
+   {Using tar for Backups}
+
+   \begin{itemize}
+      \item Create an archive: use \texttt{-c} or just \texttt{c}
+      \begin{cmd}
+$ tar cvf  /dev/st0 /root
+$ tar -cvf /dev/st0 /root
+      \end{cmd}
+      \item Create with multi volume option: use \texttt{-M}
+      \begin{cmd}
+$ tar -cMf /dev/st0 /root
+      \end{cmd}
+      Will be prompted to put next tape in
+
+      \item Verify files with compare option: use
+      \texttt{-d} or \verb?--compare?
+      \begin{cmd}
+$ tar --compare --verbose --file /dev/st0
+$ tar -dvf /dev/st0
+      \end{cmd}
+      \item
+      Note each option has a short form (one letter with a
+      \verb?-?) or a long form (with \verb?--?)
+      \item \textbf{tar} is by default recursive
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+When creating a \textbf{tar} archive, for each
+directory given as an argument, all files and
+subdirectories will be included in the archive.
+When restoring it reconstitutes directories as
+necessary.
+
+It even has a \texttt{-{}-newer} option that lets you
+do incremental backups.
+
+The version of \textbf{tar} used in \textbf{Linux} can
+also handle backups that do not fit on one tape or
+whatever device you use.
+
+You can specify a device or file with the \texttt{-f}  or
+\texttt{--file} options.
+
+After you make a backup, you can make sure that it is
+complete and correct using the verification option.
+
+By default \textbf{tar} will recursively include all
+subdirectories in the archive.
+
+When you create an archive, \textbf{tar} prints a
+message about removing leading slashes from the
+absolute path name.  While this allows you to restore
+the files anywhere, the default behavior can be
+modified.
+
+Most \textbf{tar} options can be given in short form
+with one dash, or long form with two: \texttt{-c} is
+completely equivalent to \texttt{--create}.
+
+Also note that you can combine options (when using the
+short notation) so that you do not have to type every
+dash.
+
+Furthermore, single-dashed \textbf{tar} options can be
+used with or without dashes; i.e.,
+\texttt{tar cvf file.tar dir1}  has the same result as
+\texttt{tar -cvf file.tar dir1}.
+
+}
+
+\begin{frame}
+   {Using tar for Restoring Files}
+
+   \begin{itemize}
+      \item Extract from an archive: use \texttt{-x} or
+      \verb?--extract?
+      \begin{cmd}
+$ tar --extract --same-permissions --verbose --file /dev/st0
+$ tar -xpvf /dev/st0
+$ tar  xpvf /dev/st0
+      \end{cmd}
+      \item You may name specific files to restore
+      \begin{cmd}
+$ tar -xvf /dev/st0 somefile
+      \end{cmd}
+      \item Listing the contents of a \texttt{tar} backup
+      \begin{cmd}
+$ tar --list --file /dev/st0
+$ tar -tf /dev/st0
+      \end{cmd}
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   The \texttt{-x} or \texttt{--extract} option extracts files
+   from an archive, all by default.  One can narrow the
+   file extraction list by specifying only particular
+   files.  If a directory is specified, all included files
+   and subdirectories are also extracted.
+
+   The \texttt{-p} or \texttt{--same-permissions} option
+   ensures files are restored with their original
+   permissions.
+
+   The \texttt{-t} or \texttt{--list} option lists, but
+   does not extract, the files in the archive.
+
+}
+
+\begin{frame}
+   {Incremental Backups with tar}
+
+   \begin{itemize}
+      \item Use \verb?--newer? or
+      \verb?--after-date? option
+      \item Based on date
+      \item Create a backup of all files modified after a
+      certain date and compress them:
+      \begin{cmd}
+$ tar --create --newer '2011-12-1' -vzf backup1.tgz /var/tmp
+$ tar --create --after-date '2011-12-1' -vzf backup1.tgz /var/tmp
+      \end{cmd}
+      Either form creates a backup archive of all files in
+      \filelink{/var/tmp} which were modified after December 1, 2011.
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   You can do an incremental backup with \textbf{tar}
+   using the \texttt{-N} (or the equivalent
+   \texttt{--newer}), or the \texttt{--after-date}
+   options.  Either option requires specifying either a
+   date or a qualified (reference) file name.
+
+   Because \textbf{tar} only looks at a file's date, it
+   does not consider any other changes to the file, such
+   as permissions or file name.  To include files with
+   these changes in the incremental backup, use
+   \textbf{find} and create a list of files to be backed
+   up.
+
+   \textbf{Note}: When followed by an option like
+   \texttt{--newer} you must use the dash in options
+   like \texttt{-vzf}, or \textbf{tar} will get confused.
+   This kind of option specification confusion sometimes
+   occurs with old \textbf{UNIX} utilities like
+   \textbf{ps} and \textbf{tar} with complicated histories
+   involving different families of \textbf{UNIX}.
+
+}
+
+
+

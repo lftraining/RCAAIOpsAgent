@@ -1,0 +1,1 @@
+labs/lab_wastemem.c

@@ -1,0 +1,175 @@
+\clearpage\section{Labs}\begin{Lab}
+
+   \ifINSTRUCTORLED
+      \begin{videobox}
+         \begin{alltt}
+           \reslink{using_swap_and_oom_demo.mp4}\end{alltt}
+      \end{videobox}
+   \fi
+
+   \begin{exe} {Managing Swap Space}
+
+      Examine your current swap space by doing:
+      \begin{cmd}
+$ cat /proc/swaps
+   \end{cmd}
+
+      \begin{out}[]
+Filename                                Type            Size    Used    Priority
+/dev/sda11                              partition       4193776 0       -1
+   \end{out}
+      We will now add more swap space by adding either a new
+      partition or a file.  To use a file we can do:
+      \begin{cmd}
+$ dd if=/dev/zero of=swpfile bs=1M count=1024
+   \end{cmd}
+
+      \begin{out}[]
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 1.30576 s, 822 MB/s
+   \end{out}
+      \begin{cmd}
+$ mkswap swpfile
+   \end{cmd}
+
+      \begin{out}[]
+Setting up swapspace version 1, size = 1048572 KiB
+no label, UUID=85bb62e5-84b0-4fdd-848b-4f8a289f0c4c
+   \end{out}
+      (For a real partition just feed \textbf{mkswap} the
+      partition name, but be aware all data on it will be
+      erased!)
+
+      Activate the new swap space:
+      \begin{cmd}
+$ sudo swapon swpfile
+   \end{cmd}
+
+      \begin{out}[]
+swapon: /tmp/swpfile: insecure permissions 0664, 0600 suggested.
+swapon: /tmp/swpfile: insecure file owner 500, 0 (root) suggested.
+   \end{out}
+      \begin{redhatfamilybox}
+         Notice \textbf{RHEL} warns us we are being insecure, we really
+         should fix with:
+         \begin{cmd}
+$ sudo chown root:root swpfile
+$ sudo chmod 600 swpfile
+      \end{cmd}
+      \end{redhatfamilybox}
+      We ensure \verb?swpfile? is being used:
+      \begin{cmd}
+$ cat /proc/swaps
+      \end{cmd}
+
+      \begin{out}[]
+Filename                                Type            Size    Used    Priority
+/dev/sda11                              partition       4193776 0       -1
+/tmp/swpfile                            file            1048572 0       -2
+      \end{out}
+      Note the \verb?Priority? field; swap partitions or files
+      of lower priority will not be used until higher priority
+      ones are filled.
+
+
+      Remove the swap file from use and delete it to save
+      space:
+      \begin{cmd}
+$ sudo swapoff swpfile
+$ sudo rm swpfile
+   \end{cmd}
+   \end{exe}
+
+
+   \begin{exe} {Invoking the \textbf{OOM} Killer}
+
+      \begin{itemize}
+         \item
+
+         When the \textbf{Linux} kernel gets under extreme memory
+         pressure it invokes the dreaded \textbf{OOM} (\textbf{O}ut
+         \textbf{O}f \textbf{M}emory) \textbf{Killer}. This tries to
+         select the ``best'' process to kill to help the
+         system recover gracefully.
+
+         \item
+
+         We are going to force the system to run short on memory
+         and watch what happens. The first thing to do is to open
+         up a terminal window, and in it type:
+
+         \begin{cmd}
+$ sudo tail -f /var/log/messages
+         \end{cmd}
+         in order to watch kernel messages as they appear.
+
+      \end{itemize}
+      \begin{lfbox}
+         \begin{itemize}
+            \item
+            An even better way to look is furnished by:
+            \begin{cmd}
+$ dmesg -w
+            \end{cmd}
+            as it does not show non-kernel messages.
+         \end{itemize}
+      \end{lfbox}
+      \begin{itemize}
+
+         \item
+
+         This exercise will be easier to perform if we turn off
+         all swap first with the command:
+
+         \begin{cmd}
+$ sudo /sbin/swapoff -a
+         \end{cmd}
+         Make sure you turn it back on later with
+         \begin{cmd}
+$ sudo /sbin/swapon -a
+         \end{cmd}
+
+         \item
+
+         Now we are going to put the system under increasing
+         memory pressure. You are welcome to find your own way of
+         doing it but we also supply a program for consuming the
+         memory:
+
+         \cfile[\texttt{lab\_wastemem.c}]{lab_wastemem.c}
+
+         It takes as an argument how many MB to consume.
+         Keep running it, gradually increasing the amount of memory
+         requested until your system runs out of memory.
+
+         \begin{info}
+            You should be able to compile the program and
+            run it by just doing:
+            \begin{cmd}
+$ gcc -o lab_wastemem lab_wastemem.c
+$ ./lab_wastemem 4096
+            \end{cmd}
+            which would waste 4 GB.  It would be a good idea
+            to run \textbf{gnome-system-monitor} or another
+            memory monitoring program while it is running
+            (although the display may freeze for a while!)
+         \end{info}
+
+         \item
+
+         You should see the \textbf{OOM} (Out of Memory) killer
+         swoop in and try to kill processes in a struggle to stay
+         alive. Who gets clobbered first?
+      \end{itemize}
+
+      \begin{sol}
+         \begin{alltt}
+\lablink{lab_wastemem.c}
+\lablink{lab_waste.sh}
+         \end{alltt}
+
+      \end{sol}
+
+   \end{exe}
+\end{Lab}

@@ -1,0 +1,63 @@
+\section{dd}
+
+\begin{frame}
+   {dd}
+
+   \begin{itemize}
+      \item Used to copy raw data
+      \item Low level copy of data
+      \item Syntax: \texttt{dd if=input-file of=output-file
+         options}
+      \begin{cmd}
+$ dd if=/dev/sda of=/dev/sdb
+      \end{cmd}
+      \item Can be used to create files
+      \begin{cmd}
+$ dd if=/dev/zero of=file1 bs=1M count=10
+      \end{cmd}
+      \item Can backup entire hard drives or partitions
+      \item Can copy CD or DVDs
+   \end{itemize}
+
+\end{frame}
+
+\cprotect\note{
+
+   \textbf{dd} is a common \textbf{UNIX}-based program whose primary
+   purpose is the low-level copying and conversion of raw
+   data. It is used to copy a specified number of bytes
+   or blocks, performing on-the-fly byte order
+   conversions, as well as being able to convert data
+   from one form to another. It can also be used to copy
+   regions of raw device files, for example backing up
+   the boot sector of a hard disk, or to read fixed
+   amounts of data from special files like
+   \filelink{/dev/zero} or \filelink{/dev/random}.
+
+   Backup an entire hard drive to another.
+
+   \begin{cmd}
+$ dd if=/dev/sda of=/dev/sdb
+   \end{cmd}
+
+   Create an image of a hard disk.
+
+   \begin{cmd}
+$ dd if=/dev/sda of=sdadisk.img
+   \end{cmd}
+
+   Backup a partition.
+
+   \begin{cmd}
+$ dd if=/dev/sda1 of=partition1.img
+   \end{cmd}
+
+   Backup a CD ROM.
+
+   \begin{cmd}
+$ dd if=/dev/cdrom of=tgsservice.iso bs=2048
+   \end{cmd}
+}
+
+
+
